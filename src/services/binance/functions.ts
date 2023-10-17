@@ -10,8 +10,6 @@ import axios from 'axios';
 import moment from 'moment';
 
 const discordWebhookEndpoint = process.env.DISCORD_WEBHOOK || '';
-const currency = process.env.CURRENCY;
-const tradePair = process.env.TRADE_PAIR;
 
 interface EntryProps {
     symbol: string;
@@ -25,16 +23,6 @@ interface EntryProps {
         qty: number;
     }[];
 }
-
-const sendNotifications = (message: string) => {
-    try {
-        axios.post(discordWebhookEndpoint, {
-            content: `${'```'}${message}${'```'}`,
-        });
-    } catch (error) {
-        console.log(error);
-    }
-};
 
 // const prisma = new PrismaClient();
 const countDecimals = (num: number) => {
@@ -50,13 +38,11 @@ const checkConnection = () => {
     return binanceClient.ping();
 };
 
-const currentPositions = async () => {
+const currentPositions = async (symbol: string) => {
     const accountInfo = await binanceClient.futuresAccountInfo();
 
     const positions = accountInfo.positions.filter(
-        (item) =>
-            parseFloat(item.entryPrice) > 0 &&
-            item.symbol === process.env.TRADE_PAIR
+        (item) => parseFloat(item.entryPrice) > 0 && item.symbol === symbol
     );
     return positions;
 };
@@ -71,7 +57,7 @@ const entry = async ({
     takeProfitPrice,
 }: EntryProps) => {
     /* no entry on current position */
-    const positions = await currentPositions();
+    const positions = await currentPositions(symbol);
 
     if (positions.length > 0) {
         console.log('Cancelled opening position');
@@ -112,6 +98,8 @@ const entry = async ({
         limit: 1,
     });
 
+    const currentPrice = parseFloat(trade[0].price);
+
     const riskAmount = parseFloat(balance.balance) * (risk / 100);
 
     const qty = convertToPrecision(
@@ -120,10 +108,10 @@ const entry = async ({
     );
 
     const setLeverage = Math.round(
-        (qty * entryPrice) / parseFloat(balance.availableBalance)
+        ((qty * currentPrice) / parseFloat(balance.availableBalance)) * 1.1 // use 1.1 to leave leverage room for entry
     );
 
-    console.log({ setLeverage, qty });
+    console.log({ riskAmount, setLeverage, qty });
 
     const leverage = await binanceClient.futuresLeverage({
         symbol: symbol,
@@ -134,7 +122,7 @@ const entry = async ({
         qty,
         balance: balance.balance,
         leverage: leverage.leverage,
-        price: trade[0].price,
+        price: currentPrice,
         quantityPrecision,
     });
 
@@ -150,31 +138,20 @@ const entry = async ({
     try {
         const executedEntryOrder = await binanceClient.futuresOrder(entryOrder);
 
-        console.log('ENTRY');
-        console.log({ entry: executedEntryOrder });
-        console.log('-----');
+        console.log(
+            `ENTRY ${executedEntryOrder.symbol}, ${executedEntryOrder.avgPrice}`
+        );
 
         origQty = parseFloat(executedEntryOrder.origQty);
-
-        sendNotifications(
-            `Entry ${symbol} Leverage: ${setLeverage}, Side: ${side}, Price: ${
-                executedEntryOrder.price
-            },  PartialProfits: ${JSON.stringify(partialProfits)}`
-        );
     } catch (error) {
         console.error(error);
-        sendNotifications((error as unknown as any)?.message);
     }
 
     // stoploss
-    const currentPosition = await getPosition(symbol);
 
     let price = stoplossPrice;
 
-    if (!currentPosition)
-        throw new Error('currentPosition position is undefined.');
-
-    const currentQty = Math.abs(parseFloat(currentPosition.positionAmt));
+    const currentQty = Math.abs(origQty);
 
     const stopLossOrder: NewFuturesOrder = {
         symbol: symbol,
@@ -196,7 +173,6 @@ const entry = async ({
         console.log('--------');
     } catch (error) {
         console.error(error);
-        sendNotifications((error as unknown as any)?.message);
     }
 
     // takeprofit
@@ -329,7 +305,6 @@ const setStoploss = async (
         const executedStopLossOrder = await binanceClient.futuresOrder(
             stopLossOrder
         );
-        sendNotifications(`MOVE STOPLOSS ${type}`);
 
         console.log('MOVE STOPLOSS');
         console.log({ executedStopLossOrder });
@@ -337,12 +312,13 @@ const setStoploss = async (
         // sendNotifications(`Moving stoploss to entry ${symbol} Side: ${side}`);
     } catch (error) {
         console.error(error);
-        sendNotifications((error as unknown as any)?.message);
     }
 };
 
 const getPosition = async (symbol: string) => {
-    const positions = await currentPositions();
+    console.log({ symbol });
+
+    const positions = await currentPositions(symbol);
 
     return positions.find((item) => item.symbol === symbol) || undefined;
 };
@@ -394,7 +370,6 @@ const BinanceFunctions = {
     entry,
     getPnl,
     getPosition,
-    sendNotifications,
     setStoploss,
     getCurrentBalance,
     getTradeHistory,

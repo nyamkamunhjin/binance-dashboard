@@ -1,15 +1,6 @@
-import Discord, { ActivityType } from 'discord.js';
 import { binanceClient } from '.';
-import Binance, {
-    FuturesAccountPosition,
-    FuturesUserTradeResult,
-    NewFuturesOrder,
-    OrderSide_LT,
-} from 'binance-api-node';
-import axios from 'axios';
+import { NewFuturesOrder, OrderSide_LT } from 'binance-api-node';
 import moment from 'moment';
-
-const discordWebhookEndpoint = process.env.DISCORD_WEBHOOK || '';
 
 interface EntryProps {
     symbol: string;
@@ -337,8 +328,6 @@ const getTradeHistory = async (symbol: string, limit: number) => {
         limit,
     });
 
-    // console.log(trade);
-
     return trade.flatMap((each) => {
         if (parseFloat(each.realizedPnl) === 0) return [];
 
@@ -347,9 +336,7 @@ const getTradeHistory = async (symbol: string, limit: number) => {
 };
 
 const getOpenOrders = async () => {
-    const orders = await binanceClient.futuresOpenOrders({
-        // symbol: (req.query?.pair as string) || 'BTCUSDT',
-    });
+    const orders = await binanceClient.futuresOpenOrders({});
     return orders;
 };
 

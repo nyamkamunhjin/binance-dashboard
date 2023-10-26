@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import BinanceFunctions from '@/services/binance/functions';
 import { z } from 'zod';
-import { OrderType } from 'binance-api-node';
 
 const schema = z.object({
     symbol: z.string(),

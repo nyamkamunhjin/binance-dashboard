@@ -9,13 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/core": "^7.1.6",
+    "@mantine/dates": "^7.1.6",
+    "@mantine/hooks": "^7.1.6",
+    "@mantine/modals": "^7.1.6",
+    "@mantine/notifications": "^7.1.6",
+    "@mantine/nprogress": "^7.1.6",
     "axios": "^1.5.1",
     "binance-api-node": "^0.12.7",
+    "dayjs": "^1.11.10",
     "discord.js": "^14.13.0",
     "moment": "^2.29.4",
     "next": "13.5.4",
+    "next-auth": "^4.24.4",
     "react": "^18",
     "react-dom": "^18",
+    "tabler-icons-react": "^1.56.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -25,7 +34,9 @@
     "autoprefixer": "^10",
     "eslint": "^8",
     "eslint-config-next": "13.5.4",
-    "postcss": "^8",
+    "postcss": "^8.4.31",
+    "postcss-preset-mantine": "^1.9.0",
+    "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^3",
     "typescript": "^5"
   }

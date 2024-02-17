@@ -11,7 +11,7 @@ export const Position: FC<IProps> = ({ connection }) => {
     const { isLoading, data } = useSWR<IPosition>(connection.name, () =>
         fetch(
             `${connection.url}/api/v1/binance/balance?api_key=${
-                process.env.API_KEY || ''
+                process.env.NEXT_PUBLIC_API_KEY || ''
             }`
         ).then((res) => res.json())
     );

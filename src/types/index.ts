@@ -22,7 +22,26 @@ export interface Product {
 export interface Connection {
     name: string;
     url: string;
+    symbol: string;
 }
+
+export interface IHistory {
+    symbol: string
+    id: number
+    orderId: number
+    side: string
+    price: string
+    qty: string
+    realizedPnl: string
+    quoteQty: string
+    commission: string
+    commissionAsset: string
+    time: number
+    positionSide: string
+    maker: boolean
+    buyer: boolean
+  }
+  
 
 export interface IPosition {
     accountAlias: string;

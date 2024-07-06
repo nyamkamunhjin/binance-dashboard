@@ -3,6 +3,8 @@ import { Connection, IPosition } from '@/types';
 import useSWR from 'swr';
 import { Loader, NumberFormatter } from '@mantine/core';
 import { History } from './history';
+import { Sparkline } from '@mantine/charts';
+import { Chart } from './chart';
 
 interface IProps {
     connection: Connection;
@@ -29,7 +31,7 @@ export const Position: FC<IProps> = ({ connection }) => {
     );
 
     return (
-        <div className="w-full border rounded p-4 sm:max-w-sm h-96 overflow-auto flex flex-col gap-4">
+        <div className="w-full border rounded p-4 sm:max-w-sm h-96 overflow-auto flex flex-col gap-4 scroll-">
             <h2 className="text-3xl font-medium">{connection.name}</h2>
             {isLoading ? <Loader /> : null}
             {data ? (
@@ -59,6 +61,7 @@ export const Position: FC<IProps> = ({ connection }) => {
                 </div>
             ) : null}
 
+            <Chart connection={connection} />
             <History connection={connection} />
         </div>
     );

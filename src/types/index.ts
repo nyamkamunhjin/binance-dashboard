@@ -54,3 +54,36 @@ export interface IPosition {
     marginAvailable: boolean;
     updateTime: number;
 }
+
+
+export interface Snapshot {
+    code: number
+    msg: string
+    snapshotVos: SnapshotVo[]
+  }
+  
+  export interface SnapshotVo {
+    type: string
+    updateTime: number
+    data: Data
+  }
+  
+  export interface Data {
+    assets: Asset[]
+    position: Position[]
+  }
+  
+  export interface Asset {
+    asset: string
+    marginBalance: string
+    walletBalance: string
+  }
+  
+  export interface Position {
+    symbol: string
+    entryPrice: string
+    markPrice?: string
+    positionAmt: string
+    unRealizedProfit: string
+  }
+  

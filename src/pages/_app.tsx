@@ -15,10 +15,15 @@ import '@mantine/core/styles.css';
 // import '@mantine/dropzone/styles.css';
 // import '@mantine/code-highlight/styles.css';
 // ...
+import '@mantine/charts/styles.css';
+import { SWRConfig } from 'swr';
+
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <MantineProvider>
-            <Component {...pageProps} />;
+            <SWRConfig value={{ provider: () => new Map() }}>
+                <Component {...pageProps} />;
+            </SWRConfig>
         </MantineProvider>
     );
 }

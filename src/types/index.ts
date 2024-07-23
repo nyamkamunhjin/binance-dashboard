@@ -26,22 +26,32 @@ export interface Connection {
 }
 
 export interface IHistory {
-    symbol: string
-    id: number
-    orderId: number
-    side: string
-    price: string
-    qty: string
-    realizedPnl: string
-    quoteQty: string
-    commission: string
-    commissionAsset: string
-    time: number
-    positionSide: string
-    maker: boolean
-    buyer: boolean
-  }
-  
+    symbol: string;
+    id: number;
+    orderId: number;
+    side: string;
+    price: string;
+    qty: string;
+    realizedPnl: string;
+    quoteQty: string;
+    commission: string;
+    commissionAsset: string;
+    time: number;
+    positionSide: string;
+    maker: boolean;
+    buyer: boolean;
+}
+
+export interface IIncome {
+    symbol: string;
+    incomeType: string;
+    income: string;
+    asset: string;
+    time: number;
+    info: string;
+    tranId: number;
+    tradeId: string;
+}
 
 export interface IPosition {
     accountAlias: string;
@@ -55,35 +65,33 @@ export interface IPosition {
     updateTime: number;
 }
 
-
 export interface Snapshot {
-    code: number
-    msg: string
-    snapshotVos: SnapshotVo[]
-  }
-  
-  export interface SnapshotVo {
-    type: string
-    updateTime: number
-    data: Data
-  }
-  
-  export interface Data {
-    assets: Asset[]
-    position: Position[]
-  }
-  
-  export interface Asset {
-    asset: string
-    marginBalance: string
-    walletBalance: string
-  }
-  
-  export interface Position {
-    symbol: string
-    entryPrice: string
-    markPrice?: string
-    positionAmt: string
-    unRealizedProfit: string
-  }
-  
+    code: number;
+    msg: string;
+    snapshotVos: SnapshotVo[];
+}
+
+export interface SnapshotVo {
+    type: string;
+    updateTime: number;
+    data: Data;
+}
+
+export interface Data {
+    assets: Asset[];
+    position: Position[];
+}
+
+export interface Asset {
+    asset: string;
+    marginBalance: string;
+    walletBalance: string;
+}
+
+export interface Position {
+    symbol: string;
+    entryPrice: string;
+    markPrice?: string;
+    positionAmt: string;
+    unRealizedProfit: string;
+}

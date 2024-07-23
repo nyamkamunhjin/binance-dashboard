@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useSWR from 'swr';
-import { Connection, IHistory } from '../types';
+import { Connection, IHistory, IIncome } from '../types';
 import moment from 'moment';
 
 interface IProps {
@@ -13,11 +13,11 @@ interface IProps {
  **/
 
 export const History: FC<IProps> = ({ connection }) => {
-    const { isLoading, data } = useSWR<IHistory[]>(
+    const { isLoading, data } = useSWR<IIncome[]>(
         [connection.name, process.env.NEXT_PUBLIC_API_KEY, 'history'],
         async ([name, apiKey]) => {
             const response = await fetch(
-                `${connection.url}/api/v1/binance/trade-history?api_key=${apiKey}&symbol=${connection.symbol}`
+                `${connection.url}/api/v1/binance/income?api_key=${apiKey}&symbol=${connection.symbol}`
             );
 
             const result = await response.json();
@@ -37,16 +37,16 @@ export const History: FC<IProps> = ({ connection }) => {
                             {moment(each.time).format('YYYY/MM/DD hh:mm')}
                         </span>
                         <span className="border rounded-lg p-0.5">
-                            {each.side}
+                            {each.symbol}
                         </span>
                         <span
                             className={`ml-auto ${
-                                parseFloat(each.realizedPnl) > 0
+                                parseFloat(each.income) > 0
                                     ? 'text-green-600'
                                     : 'text-red-600'
                             }`}
                         >
-                            ${parseFloat(each.realizedPnl).toFixed(2)}
+                            ${parseFloat(each.income).toFixed(2)}
                         </span>
                     </div>
                 ))}

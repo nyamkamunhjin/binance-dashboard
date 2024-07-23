@@ -14,7 +14,7 @@ const configs: Connection[] = [
     {
         name: 'Bot',
         url: 'https://bot.munkhjin.online',
-        symbol: 'BTCUSDT',
+        symbol: 'RUNEUSDT',
     },
 ];
 
